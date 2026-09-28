@@ -56,6 +56,7 @@ Common commands and workflows are available via `just` (or standard `make`):
 * `just build` / `make build` — Build contract WASM artifacts
 * `just test` / `make test` — Run workspace tests (encodes WASM build order dependency)
 * `just lint` / `make lint` — Run `cargo fmt` check and `cargo clippy` (encodes WASM build order dependency)
+* `just spell` / `make spell` — Spell check docs, interface copy and comments (see [Spell check](#spell-check))
 * `just frontend-local-bindings` / `make frontend-local-bindings` — Build and test the app in `frontend/` against this checkout's bindings after changing a contract
 * `just deploy` / `make deploy` — Deploy contracts using `./scripts/deploy.sh`
 * `just seed` / `make seed` — Seed protocol scenario data using `./scripts/seed.sh`
@@ -124,6 +125,43 @@ cost review rounds.
 
 * **Code comments:** Only add a comment when the *why* is non-obvious — a hidden constraint, a subtle invariant, or a workaround for a specific bug. Do not comment on what the code does; well-named identifiers already do that.
 * **Contract interface changes:** Any change that touches the contract state or upgrade flow must be explicitly documented. Breaking changes require an explicit version bump and testnet verification before the PR can be merged.
+
+### Spell check
+
+Every pull request runs [typos](https://github.com/crate-ci/typos) over the
+whole repository — docs, READMEs, the app's interface copy in `frontend/src`,
+and code comments — and the `spelling` job in CI fails on any misspelling. Run it
+locally before pushing:
+
+```bash
+# Once: a prebuilt binary (or `cargo install --locked typos-cli`, which needs
+# a recent Rust). CI pins 1.50.3; the same version gives the same verdict.
+brew install typos-cli
+
+typos                   # report (or `just spell` / `make spell`)
+typos --write-changes   # apply the unambiguous fixes, then review the diff
+```
+
+typos looks for *known* misspellings — the usual ways "receive" and "across" get
+mistyped — rather than words it does not recognise. That keeps it quiet about
+Stellar and protocol vocabulary: Soroban, strkey, SEP-24, tranche, and the rest
+of [the glossary](docs/glossary.md) pass unlisted. It also means a transposition
+in an unusual word ("microgrants" with two letters swapped) gets through. It is a
+net, not a proofreader.
+
+**The word list** is `[default.extend-words]` in [`_typos.toml`](_typos.toml).
+Add a word there only when typos flags something that is correct here, and say
+why in a comment beside it. The current entries:
+
+| Entry | Why it is correct |
+| :--- | :--- |
+| `sme` | Small and medium-sized enterprises — the "SME microgrants" vertical |
+| `directd` | The programme's `Directed` event topic. It is on-chain interface: the indexer decodes events by it, so renaming it is a breaking change, not a spelling fix |
+
+Two things are skipped rather than listed: Stellar addresses (`G…`/`C…` strkeys,
+whose letters form accidental near-words), matched by `extend-ignore-re`, and
+the design tool's `*.dc.html` exports, which are generated markup. Spelling is all
+it checks; style and grammar are for review.
 
 ---
 

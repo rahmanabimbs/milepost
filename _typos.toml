@@ -1,0 +1,31 @@
+# Spell check configuration for typos (https://github.com/crate-ci/typos).
+# CI runs it over the whole repository on every pull request; how to run it
+# locally, and when to add a word here, is in CONTRIBUTING.md#spell-check.
+#
+# typos flags known misspellings rather than unknown words, so Stellar and
+# protocol vocabulary (Soroban, strkey, SEP-24, tranche, …) passes without being
+# listed. Only a term that collides with a known misspelling belongs below, and
+# every entry says why it is correct here.
+
+[files]
+extend-exclude = [
+  # Exports from the design tool: generated markup and script, not copy anyone
+  # wrote. The prose that matters from them is in frontend/docs/design/README.md.
+  "*.dc.html",
+]
+
+[default]
+extend-ignore-re = [
+  # Stellar strkeys: account (G…) and contract (C…) addresses. Real keys are
+  # base32, but fixtures use readable made-up ones, so any digit is allowed.
+  # Letters inside a key are not words, even when typos thinks they are.
+  "\\b[GC][A-Z0-9]{20,}\\b",
+]
+
+[default.extend-words]
+# Small and medium-sized enterprises: the "SME microgrants" funding vertical.
+sme = "sme"
+# The programme's `Directed` event topic, abbreviated like `allocd` and
+# `configd`. It is on-chain interface — the indexer decodes events by it — so
+# "fixing" it would be a breaking change, not a spelling fix.
+directd = "directd"

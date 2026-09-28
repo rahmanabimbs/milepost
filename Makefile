@@ -1,4 +1,4 @@
-.PHONY: help build test lint frontend-local-bindings deploy seed
+.PHONY: help build test lint spell frontend-local-bindings deploy seed
 
 # Default target listing all available tasks
 help:
@@ -6,6 +6,7 @@ help:
 	@echo "  make build          Build contract WASM artifacts"
 	@echo "  make test           Run contract tests (depends on build)"
 	@echo "  make lint           Run rustfmt check and clippy (depends on build)"
+	@echo "  make spell          Spell check docs, READMEs, interface copy and comments"
 	@echo "  make frontend-local-bindings Build and test the app against this checkout's bindings (FRONTEND_DIR, default frontend)"
 	@echo "  make deploy         Deploy contracts using scripts/deploy.sh"
 	@echo "  make seed           Seed protocol data using scripts/seed.sh"
@@ -22,6 +23,10 @@ test: build
 lint: build
 	cargo fmt --all --check
 	cargo clippy --all-targets --all-features -- -D warnings
+
+# Spell check docs, READMEs, interface copy and comments (config in _typos.toml)
+spell:
+	typos
 
 # Build and test the app against the bindings built from this checkout, the
 # check to run after changing a contract. The app lives in frontend/; set

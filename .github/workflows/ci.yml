@@ -10,6 +10,15 @@ env:
   RUSTFLAGS: -D warnings
 
 jobs:
+  # Docs, READMEs, interface copy and code comments. Configuration and the word
+  # list are in _typos.toml; see CONTRIBUTING.md#spell-check. Pinned, because a
+  # new typos release adds dictionary entries and could fail an unrelated PR.
+  spelling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: crate-ci/typos@v1.50.3
+
   check:
     runs-on: ubuntu-latest
     # rustsec/audit-check publishes its result as a check run. Without an

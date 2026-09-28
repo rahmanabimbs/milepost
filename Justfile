@@ -20,6 +20,10 @@ lint: build
     cargo fmt --all --check
     cargo clippy --all-targets --all-features -- -D warnings
 
+# Spell check docs, READMEs, interface copy and comments (config in _typos.toml)
+spell:
+    typos
+
 # `npm ci` in the app puts the published versions back afterwards.
 # Build and test the app in frontend/ against this checkout's bindings, after changing a contract
 frontend-local-bindings frontend_dir="frontend":
